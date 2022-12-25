@@ -26,6 +26,18 @@ mongoose.connect(process.env.MONGO_URI,(err,done)=>{
 app.use('/',server)
 
 
+app.use("/api", apiRoutes);
+
+const path = require('path');
+if(process.env.NODE_ENV === 'production'){
+  app.use(express.static(path.join(__dirname, "../client/build")));
+  app.get("*",(req,res)=>res.sendFile(path.resolve(__dirname, "../client","build","index.html")))
+}else{
+  app.get('/',(req,res)=>{
+    res.json({message:"API running..."})
+  })
+}
+
 const PORT = process.env.PORT;
 app.listen(PORT,()=>{
     console.log("Server has been started on port ",PORT);
